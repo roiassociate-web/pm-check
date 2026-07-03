@@ -570,6 +570,7 @@
     show(html, {
       back: true,
       onMount: function (el) {
+        preloadH2C(); // 저장 화면 도달 전 이미지 라이브러리 미리 로드
         el.querySelector("#toGoal").addEventListener("click", function () {
           history.push("weak"); screenGoal();
         });
@@ -787,36 +788,58 @@
     document.head.appendChild(s);
   }
 
+  function preloadH2C() { withHtml2canvas(function () {}); } // 저장 지연 줄이려 미리 로드
+
   function saveImage(node) {
     if (!node) return;
     toast("이미지를 만드는 중…");
     withHtml2canvas(function (h2c) {
       if (!h2c) {
-        // 라이브러리 로드 실패(오프라인/미리보기) → 인쇄로 폴백
-        toast("저장 기능을 불러오지 못했어요. 인쇄 화면으로 저장해 주세요");
-        setTimeout(function () { window.print(); }, 400);
+        toast("저장 기능을 불러오지 못했어요. 화면을 스크린샷 해주세요");
         return;
       }
       h2c(node, { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false })
         .then(function (canvas) {
-          var done = function (href, revoke) {
-            var a = document.createElement("a");
-            a.href = href; a.download = "PM자기진단_결과.png";
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            if (revoke) setTimeout(function () { URL.revokeObjectURL(href); }, 1500);
-            toast("결과 이미지를 저장했어요");
+          var finish = function (blob) {
+            if (!blob) { toast("이미지 생성에 실패했어요"); return; }
+            var file = null;
+            try { file = new File([blob], "PM자기진단_결과.png", { type: "image/png" }); } catch (e) {}
+            // 모바일: 공유 시트로 → [사진 저장] 또는 카카오톡 전송
+            if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+              navigator.share({ files: [file], title: "PM 자기진단 결과", text: "나의 PM 성장 플랜" })
+                .then(function () {})
+                .catch(function (err) {
+                  if (err && err.name === "AbortError") return; // 사용자가 시트 닫음
+                  downloadBlob(blob);
+                });
+            } else {
+              // 데스크톱: 바로 다운로드
+              downloadBlob(blob);
+            }
           };
-          if (canvas.toBlob) {
-            canvas.toBlob(function (blob) {
-              if (blob && window.URL && URL.createObjectURL) done(URL.createObjectURL(blob), true);
-              else done(canvas.toDataURL("image/png"), false);
-            }, "image/png");
-          } else {
-            done(canvas.toDataURL("image/png"), false);
-          }
+          if (canvas.toBlob) canvas.toBlob(finish, "image/png");
+          else finish(dataURLtoBlob(canvas.toDataURL("image/png")));
         })
         .catch(function () { toast("저장에 실패했어요. 화면을 스크린샷 해주세요"); });
     });
+  }
+
+  function downloadBlob(blob) {
+    try {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = "PM자기진단_결과.png";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+      toast("이미지를 저장했어요");
+    } catch (e) { toast("저장에 실패했어요. 화면을 스크린샷 해주세요"); }
+  }
+
+  function dataURLtoBlob(dataurl) {
+    var arr = dataurl.split(","), mime = arr[0].match(/:(.*?);/)[1];
+    var bstr = atob(arr[1]), n = bstr.length, u8 = new Uint8Array(n);
+    while (n--) u8[n] = bstr.charCodeAt(n);
+    return new Blob([u8], { type: mime });
   }
 
   // ---------- utils ----------
