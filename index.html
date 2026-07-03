@@ -205,6 +205,13 @@
   .share-row .cta { flex: 1; }
   .share-cap { font-size: 13px; color: var(--ink-faint); font-weight: 600; text-align: center; margin: 4px 0 -2px; }
 
+  /* 인앱 브라우저 안내 */
+  .notice { display: flex; gap: 9px; align-items: flex-start; background: #FFF7ED; border: 1px solid #FFE0C2; border-radius: 12px; padding: 11px 13px; margin-bottom: 4px; }
+  .notice .ic { flex: 0 0 auto; margin-top: 1px; }
+  .notice .tx { font-size: 12.5px; color: #925A17; font-weight: 600; line-height: 1.55; }
+  .notice .tx b { color: #B4560E; }
+  .notice-link { display: inline; color: var(--blue-deep); font-weight: 800; text-decoration: underline; cursor: pointer; }
+
   /* saveable result card (30일 화면) */
   .capture { background: #fff; padding: 6px 2px 14px; }
   .plan-head { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 4px; }
@@ -632,6 +639,15 @@
       var sentence = "나는 앞으로 " + g[0] + " " + g[1] + ". 그 결과 " + g[2] + ".";
       return '<p>' + esc(sentence.replace(/\s+/g, " ").trim()) + '</p>';
     }).join("");
+    var ia = inAppInfo();
+    var notice = ia ?
+      '<div class="notice">' +
+        '<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 8.5v4.5m0 3h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#B4560E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '<span class="tx">지금 <b>' + ia.name + '</b> 안에서 열려 있어 이미지 저장이 막힐 수 있어요. ' +
+          (ia.kakao ? '<span class="notice-link" id="extOpen">다른 브라우저로 열기</span> 후 저장하세요.'
+                    : '우측 상단 메뉴에서 <b>다른 브라우저로 열기</b> 후 저장하세요.') +
+        '</span>' +
+      '</div>' : '';
     var html =
       '<div class="spacer-sm"></div>' +
       '<div id="capture" class="capture">' +
@@ -648,6 +664,7 @@
       '</div>' +
       '<div style="height:20px"></div>' +
       '<div class="footer-cta no-print">' +
+        notice +
         '<button class="cta" id="saveBtn">결과 이미지로 저장</button>' +
         '<div class="share-cap">이 진단을 팀·동료에게 추천해요</div>' +
         '<div class="share-row">' +
@@ -664,6 +681,10 @@
       onMount: function (el) {
         // 화면 전환(슬라이드) 끝난 뒤 결과 이미지를 미리 렌더링해 둔다
         setTimeout(function () { prerenderPlan(el.querySelector("#capture")); }, 520);
+        var ext = el.querySelector("#extOpen");
+        if (ext) ext.addEventListener("click", function () {
+          try { location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(location.href); } catch (e) {}
+        });
         el.querySelector("#saveBtn").addEventListener("click", function () { saveImage(el.querySelector("#capture")); });
         el.querySelector("#kakaoBtn").addEventListener("click", shareApp);
         el.querySelector("#linkBtn").addEventListener("click", copyLink);
@@ -791,6 +812,18 @@
   }
 
   function preloadH2C() { withHtml2canvas(function () {}); } // 저장 지연 줄이려 미리 로드
+
+  // 인앱(웹뷰) 브라우저 감지 — 이 안에서는 저장/다운로드가 막히는 경우가 많음
+  function inAppInfo() {
+    var ua = navigator.userAgent || "";
+    if (/KAKAOTALK/i.test(ua)) return { name: "카카오톡", kakao: true };
+    if (/instagram/i.test(ua)) return { name: "인스타그램" };
+    if (/FBAN|FBAV|FB_IAB/i.test(ua)) return { name: "페이스북" };
+    if (/Line\//i.test(ua)) return { name: "라인" };
+    if (/NAVER\(inapp/i.test(ua)) return { name: "네이버 앱" };
+    if (/DaumApps/i.test(ua)) return { name: "다음 앱" };
+    return null;
+  }
 
   var planBlob = null; // 저장 버튼 누르기 전에 미리 만들어 둔 결과 이미지
 
