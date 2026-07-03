@@ -829,8 +829,10 @@
     if (!blob) { toast("이미지 생성에 실패했어요"); return; }
     var file = null;
     try { file = new File([blob], "PM자기진단_결과.png", { type: "image/png" }); } catch (e) {}
+    // 폰(터치 우선)은 공유 시트, PC는 곧바로 다운로드
+    var wantShare = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
     // 1) 모바일: 공유 시트 → [사진(이미지) 저장] 또는 카카오톡 전송
-    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+    if (wantShare && file && navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator.share({ files: [file], title: "PM 자기진단 결과", text: "나의 PM 성장 플랜" })
         .then(function () {})
         .catch(function (err) { if (err && err.name === "AbortError") return; fallbackSave(blob); });
