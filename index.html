@@ -763,9 +763,14 @@
       if (ok) {
         try {
           window.Kakao.Share.sendDefault({
-            objectType: "text",
-            text: SHARE_TITLE + "\n" + SHARE_TEXT,
-            link: { mobileWebUrl: url, webUrl: url }
+            objectType: "feed",
+            content: {
+              title: SHARE_TITLE,
+              description: SHARE_TEXT,
+              imageUrl: "https://roiassociate-web.github.io/pm-check/og.png",
+              link: { mobileWebUrl: url, webUrl: url }
+            },
+            buttons: [{ title: "진단하러 가기", link: { mobileWebUrl: url, webUrl: url } }]
           });
           return;
         } catch (e) { /* 아래로 폴백 */ }
