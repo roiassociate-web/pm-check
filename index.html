@@ -262,16 +262,16 @@
 
   // ---------- DATA ----------
   var QUESTIONS = [
-    { axis: "업무 관리", area: "과업 구조화", text: "큰 업무를 실제 실행 단위로 쪼개서 관리한다." },
-    { axis: "업무 관리", area: "일정 관리", text: "마감일에서 역산해 내부 마감일을 따로 잡는다." },
-    { axis: "업무 관리", area: "커뮤니케이션", text: "회의 후 1시간 내 결정사항·할 일·기한을 공유한다." },
+    { axis: "업무 관리", area: "과업 구조화", text: "큰 업무를 실제 실행 단위로\n쪼개서 관리한다." },
+    { axis: "업무 관리", area: "일정 관리", text: "마감일에서 역산해\n내부 마감일을 따로 잡는다." },
+    { axis: "업무 관리", area: "커뮤니케이션", text: "회의 후 1시간 내\n결정사항 · 할 일 · 기한을 공유한다." },
     { axis: "업무 관리", area: "파일·버전", text: "최종본·수정본·전달본이 파일명만 봐도 구분된다." },
-    { axis: "업무 관리", area: "산출물 관리", text: "각 산출물이 지금 어느 단계인지 항상 답할 수 있다." },
+    { axis: "업무 관리", area: "산출물 관리", text: "각 산출물이 지금\n어느 단계인지 항상 답할 수 있다." },
     { axis: "프로젝트 경영", area: "범위 관리", text: "고객 요청을 범위 내·협의 가능·추가 과업으로 구분한다." },
-    { axis: "프로젝트 경영", area: "고객 기대", text: "\"가능합니다\" 전에 일정·투입 영향을 먼저 확인한다." },
+    { axis: "프로젝트 경영", area: "고객 기대", text: "\"가능합니다\" 전에\n일정 · 투입 영향을 먼저 확인한다." },
     { axis: "프로젝트 경영", area: "품질 판단", text: "고객이 보고 바로 실행할 수 있는 상태인지 판단한다." },
-    { axis: "프로젝트 경영", area: "리스크 감지", text: "문제가 되기 전에 조기 신호를 먼저 공유한다." },
-    { axis: "프로젝트 경영", area: "보고 판단", text: "내가 처리할 일과 리더의 판단이 필요한 일을 구분한다." }
+    { axis: "프로젝트 경영", area: "리스크 감지", text: "문제가 되기 전에\n조기 신호를 먼저 공유한다." },
+    { axis: "프로젝트 경영", area: "보고 판단", text: "내가 처리할 일과\n리더의 판단이 필요한 일을 구분한다." }
   ];
 
   var CHOICES = [
@@ -447,7 +447,7 @@
     var html =
       '<div class="spacer-sm"></div>' +
       '<div class="q-area">' + esc(q.axis) + ' · ' + esc(q.area) + '</div>' +
-      '<h2 class="q-text">' + esc(q.text) + '</h2>' +
+      '<h2 class="q-text">' + esc(q.text).replace(/\n/g, "<br>") + '</h2>' +
       '<div class="grow"></div>' +
       '<div class="opts">' + optHtml + '</div>';
     show(html, {
@@ -590,8 +590,8 @@
         '<div class="gt">' + esc(w.area) + '</div>' +
         '<div class="goal-form">' +
           '<div class="goal-line">나는 앞으로 <textarea rows="1" data-s="0">' + esc(g[0]) + '</textarea></div>' +
-          '<div class="goal-line"><textarea rows="1" data-s="1">' + esc(g[1]) + '</textarea> 하겠다.</div>' +
-          '<div class="goal-line">그 결과 <textarea rows="1" data-s="2">' + esc(g[2]) + '</textarea> 만들겠다.</div>' +
+          '<div class="goal-line"><textarea rows="1" data-s="1">' + esc(g[1]) + '</textarea></div>' +
+          '<div class="goal-line">그 결과 <textarea rows="1" data-s="2">' + esc(g[2]) + '</textarea></div>' +
         '</div></div>';
     }).join("");
     var html =
@@ -629,7 +629,7 @@
     }).join("");
     var recap = r.weak.map(function (w) {
       var g = goalValues[w.area] || ["","",""];
-      var sentence = "나는 앞으로 " + g[0] + " " + g[1] + " 하겠다. 그 결과 " + g[2] + " 만들겠다.";
+      var sentence = "나는 앞으로 " + g[0] + " " + g[1] + ". 그 결과 " + g[2] + ".";
       return '<p>' + esc(sentence.replace(/\s+/g, " ").trim()) + '</p>';
     }).join("");
     var html =
