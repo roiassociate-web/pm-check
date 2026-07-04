@@ -160,15 +160,15 @@
   .bar-row { display: grid; grid-template-columns: 92px 1fr 30px; align-items: center; gap: 12px; }
   .bar-row .bn { font-size: 13.5px; font-weight: 600; color: var(--ink-soft); }
   .bar-track { height: 8px; background: var(--line); border-radius: 5px; overflow: hidden; }
-  .bar-track b { display: block; height: 100%; background: var(--blue); border-radius: 5px; width: 0; transition: width .6s cubic-bezier(.2,.7,.3,1); }
-  .bar-row.low .bn { color: var(--warn); font-weight: 700; }
-  .bar-row.low .bar-track b { background: var(--warn); }
+  .bar-track b { display: block; height: 100%; background: #B7CCEC; border-radius: 5px; width: 0; transition: width .6s cubic-bezier(.2,.7,.3,1); }
+  .bar-row.low .bn { color: var(--blue-deep); font-weight: 700; }
+  .bar-row.low .bar-track b { background: var(--blue); }
   .bar-row .bv { font-size: 13px; font-weight: 700; color: var(--ink-faint); text-align: right; font-variant-numeric: tabular-nums; }
 
   /* weak cards */
   .weak-list { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
-  .weak-card { background: #FFF7F0; border: 1.5px solid #FFE1CC; border-radius: 18px; padding: 20px; }
-  .weak-card .wl { font-size: 12.5px; font-weight: 700; color: var(--warn); }
+  .weak-card { background: var(--tint); border: 1.5px solid var(--tint-deep); border-radius: 18px; padding: 20px; }
+  .weak-card .wl { font-size: 12.5px; font-weight: 700; color: var(--blue); }
   .weak-card .wn { font-size: 19px; font-weight: 800; color: var(--ink); margin-top: 4px; }
   .weak-card .ww { font-size: 14px; color: var(--ink-soft); margin-top: 8px; font-weight: 500; line-height: 1.55; }
 
@@ -218,10 +218,10 @@
   .share-cap { font-size: 13px; color: var(--ink-faint); font-weight: 600; text-align: center; margin: 4px 0 -2px; }
 
   /* 인앱 브라우저 안내 */
-  .notice { display: flex; gap: 9px; align-items: flex-start; background: #FFF7ED; border: 1px solid #FFE0C2; border-radius: 12px; padding: 11px 13px; margin-bottom: 4px; }
+  .notice { display: flex; gap: 9px; align-items: flex-start; background: var(--tint); border: 1px solid var(--tint-deep); border-radius: 12px; padding: 11px 13px; margin-bottom: 4px; }
   .notice .ic { flex: 0 0 auto; margin-top: 1px; }
-  .notice .tx { font-size: 12.5px; color: #925A17; font-weight: 600; line-height: 1.55; }
-  .notice .tx b { color: #B4560E; }
+  .notice .tx { font-size: 12.5px; color: var(--ink-soft); font-weight: 600; line-height: 1.55; }
+  .notice .tx b { color: var(--blue-deep); }
   .notice-link { display: inline; color: var(--blue-deep); font-weight: 800; text-decoration: underline; cursor: pointer; }
 
   /* saveable result card (30일 화면) */
@@ -300,8 +300,8 @@
   ];
 
   var BANDS = [
-    { min: 0,  max: 39,  name: "반응형 실무자",     color: "#F04452", desc: "일이 생기면 처리하지만, 먼저 구조화하고 관리하는 힘은 아직 약한 상태예요." },
-    { min: 40, max: 59,  name: "기본 관리 단계",     color: "#F09000", desc: "일정과 업무는 챙기지만, 범위·품질·리스크 판단은 훈련이 필요한 상태예요." },
+    { min: 0,  max: 39,  name: "반응형 실무자",     color: "#6B84A8", desc: "일이 생기면 처리하지만, 먼저 구조화하고 관리하는 힘은 아직 약한 상태예요." },
+    { min: 40, max: 59,  name: "기본 관리 단계",     color: "#5B8DEF", desc: "일정과 업무는 챙기지만, 범위·품질·리스크 판단은 훈련이 필요한 상태예요." },
     { min: 60, max: 79,  name: "안정적 PM",         color: "#3182F6", desc: "프로젝트를 비교적 안정적으로 운영할 수 있는 상태예요." },
     { min: 80, max: 100, name: "프로젝트 리더 후보", color: "#17A366", desc: "단순 업무 관리를 넘어 결과와 고객 신뢰까지 볼 수 있는 상태예요." }
   ];
@@ -654,7 +654,7 @@
     var ia = inAppInfo();
     var notice = ia ?
       '<div class="notice">' +
-        '<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 8.5v4.5m0 3h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#B4560E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '<svg class="ic" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 8.5v4.5m0 3h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h16.9a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="#1B64DA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
         '<span class="tx">지금 <b>' + ia.name + '</b> 안에서 열려 있어 이미지 저장이 막힐 수 있어요. ' +
           (ia.kakao ? '<span class="notice-link" id="extOpen">다른 브라우저로 열기</span> 후 저장하세요.'
                     : '우측 상단 메뉴에서 <b>다른 브라우저로 열기</b> 후 저장하세요.') +
@@ -915,7 +915,7 @@
 
   // ---------- utils ----------
   function hexTint(hex) {
-    var c = { "#F04452":"#FDECEE", "#F09000":"#FDF1E0", "#3182F6":"#EDF4FF", "#17A366":"#E6F6EE" };
+    var c = { "#6B84A8":"#EDF1F7", "#5B8DEF":"#EAF1FE", "#3182F6":"#EDF4FF", "#17A366":"#E6F6EE" };
     return c[hex] || "#EDF4FF";
   }
 
