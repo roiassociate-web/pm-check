@@ -844,6 +844,19 @@
 
   var planBlob = null; // 저장 버튼 누르기 전에 미리 만들어 둔 결과 이미지
 
+  // 캡처 결과 둘레에 흰 여백을 둘러 실제 화면처럼 여유 있게 (device px, 이미지 @2x)
+  function padCanvas(src) {
+    var padX = 64, padTop = 48, padBottom = 56;
+    var out = document.createElement("canvas");
+    out.width = src.width + padX * 2;
+    out.height = src.height + padTop + padBottom;
+    var ctx = out.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, out.width, out.height);
+    ctx.drawImage(src, padX, padTop);
+    return out;
+  }
+
   function renderCapture(node, cb) {
     if (!node) { cb(null, "no-node"); return; }
     withHtml2canvas(function (h2c) {
@@ -851,8 +864,9 @@
       try {
         h2c(node, { scale: 2, backgroundColor: "#ffffff", useCORS: true, logging: false })
           .then(function (canvas) {
-            if (canvas.toBlob) canvas.toBlob(function (b) { cb(b, b ? null : "blob"); }, "image/png");
-            else cb(dataURLtoBlob(canvas.toDataURL("image/png")), null);
+            var c = padCanvas(canvas);
+            if (c.toBlob) c.toBlob(function (b) { cb(b, b ? null : "blob"); }, "image/png");
+            else cb(dataURLtoBlob(c.toDataURL("image/png")), null);
           })
           .catch(function () { cb(null, "render"); });
       } catch (e) { cb(null, "render"); }
